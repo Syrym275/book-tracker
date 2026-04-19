@@ -1,0 +1,53 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="auth-icon">🎬</span>
+      <h1>Welcome Back</h1>
+      <p>Sign in to your MovieLog account</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="error-alert">
+        <span>⚠️</span> {{ errorMessage }}
+      </div>
+    }
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        [(ngModel)]="username"
+        placeholder="Enter your username"
+        class="form-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        [(ngModel)]="password"
+        placeholder="Enter your password"
+        class="form-input"
+      />
+    </div>
+
+    <button
+      class="btn-primary"
+      (click)="onLogin()"
+      [disabled]="isLoading || !username || !password"
+    >
+      @if (isLoading) {
+        <span class="spinner"></span> Signing in...
+      } @else {
+        Sign In
+      }
+    </button>
+
+    <p class="auth-footer">
+      Don't have an account? <a routerLink="/register">Register here</a>
+    </p>
+  </div>
+</div>
