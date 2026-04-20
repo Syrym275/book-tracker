@@ -1,0 +1,54 @@
+<div class="movie-list-page">
+  <div class="hero">
+    <h1>🎬 MovieLog</h1>
+    <p class="hero-sub">Discover, Rate, and Track Your Movie Journey</p>
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Search by title or description..." class="search-input" (keyup.enter)="onSearch()" />
+      <button class="btn-search" (click)="onSearch()">Search</button>
+    </div>
+
+    <div class="genre-filters">
+      <button 
+        class="genre-chip top-rated-btn" 
+        [class.active]="showTopRated"
+        (click)="toggleTopRated()">
+        ⭐ Top Rated
+      </button>
+
+      @for (genre of genres; track genre.slug) {
+        <button 
+          class="genre-chip" 
+          [class.active]="selectedGenre === genre.slug"
+          (click)="onSelectGenre(genre.slug)">
+          {{ genre.name }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (errorMessage) { <div class="error-banner">{{ errorMessage }}</div> }
+  @if (isLoading) { <p>Loading...</p> }
+
+  @if (!isLoading) {
+    <div class="movies-grid">
+      @for (movie of movies; track movie.id) {
+        <a [routerLink]="['/movies', movie.id]" class="movie-card">
+          <div class="movie-poster">
+            <img [src]="movie.poster_url || 'https://via.placeholder.com/300'" [alt]="movie.title" />
+            <div class="movie-overlay"><span class="movie-year">{{ movie.release_year }}</span></div>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">{{ movie.title }}</h3>
+            <div class="movie-rating">
+              <span class="user-score">⭐️ {{ movie.average_rating ? movie.average_rating + '/10' : 'No reviews' }}</span>
+              <span class="imdb-score" title="IMDb Rating">IMDb: {{ movie.imdb_rating }}</span>
+            </div>
+            @if (isLoggedIn) {
+              <button class="btn-add-first" style="margin-top:10px" (click)="onTrack(movie, $event)">+ Add to List</button>
+            }
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

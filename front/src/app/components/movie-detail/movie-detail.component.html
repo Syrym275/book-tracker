@@ -1,0 +1,113 @@
+<div class="detail-page">
+  @if (isLoading) {
+    <div class="loading"><p>Loading movie...</p></div>
+  }
+Review
+  @if (!isLoading && !movie) {
+    <div class="not-found">
+      <h2>Movie not found</h2>
+      <a routerLink="/movies" class="btn-back">← Back to Movies</a>
+    </div>
+  }
+
+  @if (movie) {
+    <a routerLink="/movies" class="btn-back">← Back to Movies</a>
+
+    <div class="movie-hero">
+      <div class="movie-poster-large">
+        @if (movie.poster_url) {
+          <img [src]="movie.poster_url" [alt]="movie.title" />
+        } @else {
+          <div class="poster-placeholder-lg">🎬</div>
+        }
+      </div>
+
+      <div class="movie-details">
+        <h1>{{ movie.title }}</h1>
+        <div class="meta-row">
+          <span class="badge">{{ movie.release_year }}</span>
+          @if (movie.language) { <span class="badge">{{ movie.language }}</span> }
+          @if (movie.duration_minutes) { <span class="badge">{{ movie.duration_minutes }} min</span> }
+          @if (movie.imdb_rating) { <span class="badge imdb">⭐ IMDb {{ movie.imdb_rating }}</span> }
+        </div>
+
+        <div class="genres-row">
+          @for (genre of movie.genres; track genre.id) {
+            <span class="genre-tag">{{ genre.name }}</span>
+          }
+        </div>
+
+        <p class="description">{{ movie.description || 'No description available.' }}</p>
+
+        <div class="stats-row">
+          <div class="stat">
+            <span class="stat-value">{{ movie.average_rating || '—' }}</span>
+            <span class="stat-label">Avg Rating</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">{{ movie.total_reviews }}</span>
+            <span class="stat-label">Reviews</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">{{ movie.times_added }}</span>
+            <span class="stat-label">Lists</span>
+          </div>
+        </div>
+
+        @if (isLoggedIn) {
+          <div class="action-buttons" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <select [(ngModel)]="selectedStatus" class="input-field" style="width: auto; margin-bottom: 0; padding: 10px; background: rgba(255,255,255,0.1); color: white; border-radius: 8px;">
+              <option value="want_to_watch">Want to Watch</option>
+              <option value="watching">Watching</option>
+              <option value="watched">Watched</option>
+              <option value="dropped">Dropped</option>
+            </select>
+            <button class="btn-primary" (click)="onTrackMovie()" style="margin: 0;">Update Status</button>
+            <button class="btn-secondary" (click)="onToggleReviewForm()" style="margin: 0;">
+              {{ showReviewForm ? 'Cancel' : '✍️ Write Review' }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Review Form -->
+    @if (showReviewForm && isLoggedIn) {
+      <div class="review-form-card">
+        <h3>Write your review</h3>
+        @if (reviewError) { <p class="error-msg">{{ reviewError }}</p> }
+        <div class="form-group">
+          <label>Rating (1-10)</label>
+          <input type="number" [(ngModel)]="newReviewRating" min="1" max="10" class="input-field rating-input" />
+        </div>
+        <div class="form-group">
+          <label>Your Review</label>
+          <textarea [(ngModel)]="newReviewBody" rows="4" placeholder="What did you think about this movie?" class="input-field"></textarea>
+        </div>
+        <button class="btn-primary" (click)="onSubmitReview()">Submit Review</button>
+      </div>
+    }
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+      <h2>Reviews ({{ reviews.length }})</h2>
+      @if (reviews.length === 0) {
+        <p class="no-reviews">No reviews yet. Be the first to review!</p>
+      }
+      @for (review of reviews; track review.id) {
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-user">{{ review.username }}</span>
+            <span class="review-rating">⭐ {{ review.rating }}/10</span>
+            <span class="review-date">{{ review.created_at | date:'mediumDate' }}</span>
+          </div>
+          <p class="review-body">{{ review.body }}</p>
+          @if (review.is_edited) { <span class="edited-tag">(edited)</span> }
+          @if (isLoggedIn) {
+            <button class="btn-delete" (click)="onDeleteReview(review.id)">🗑️ Delete</button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
