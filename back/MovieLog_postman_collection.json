@@ -1,0 +1,358 @@
+{
+  "info": {
+    "name": "MovieLog API",
+    "_postman_id": "movielog-api-collection",
+    "description": "MovieLog API — Angular + Django REST Framework",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"testpass123\",\n  \"password_confirm\": \"testpass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"token\": \"abc123def456\",\n  \"user_id\": 1,\n  \"username\": \"testuser\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"testpass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"token\": \"abc123def456\",\n  \"user_id\": 1,\n  \"username\": \"testuser\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"message\": \"Successfully logged out.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Genres",
+      "item": [
+        {
+          "name": "List Genres",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/genres/",
+              "host": ["{{base_url}}"],
+              "path": ["genres", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Action\",\n    \"description\": \"High-energy films\",\n    \"movie_count\": 0\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Comedy\",\n    \"description\": \"Films designed to amuse\",\n    \"movie_count\": 0\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Movies",
+      "item": [
+        {
+          "name": "List Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"title\": \"Inception\",\n    \"description\": \"A mind-bending thriller\",\n    \"year\": 2010,\n    \"poster_url\": \"\",\n    \"genre\": 1,\n    \"genre_name\": \"Sci-Fi\",\n    \"created_by\": 1,\n    \"created_by_username\": \"testuser\",\n    \"average_rating\": 9.0,\n    \"review_count\": 1,\n    \"created_at\": \"2026-04-14T10:00:00Z\",\n    \"updated_at\": \"2026-04-14T10:00:00Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "List Movies (Filter by Genre)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/?genre=1",
+              "host": ["{{base_url}}"],
+              "path": ["movies", ""],
+              "query": [
+                { "key": "genre", "value": "1" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Movies (Search)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/?search=inception",
+              "host": ["{{base_url}}"],
+              "path": ["movies", ""],
+              "query": [
+                { "key": "search", "value": "inception" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Movie",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception\",\n  \"description\": \"A mind-bending thriller by Christopher Nolan\",\n  \"year\": 2010,\n  \"poster_url\": \"https://image.tmdb.org/t/p/w500/ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg\",\n  \"genre\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Inception\",\n  \"description\": \"A mind-bending thriller by Christopher Nolan\",\n  \"year\": 2010,\n  \"poster_url\": \"https://image.tmdb.org/t/p/w500/ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg\",\n  \"genre\": 5,\n  \"genre_name\": \"Sci-Fi\",\n  \"created_by\": 1,\n  \"created_by_username\": \"testuser\",\n  \"average_rating\": 0,\n  \"review_count\": 0,\n  \"reviews\": [],\n  \"created_at\": \"2026-04-14T10:00:00Z\",\n  \"updated_at\": \"2026-04-14T10:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Movie Detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/1/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "1", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Inception\",\n  \"description\": \"A mind-bending thriller by Christopher Nolan\",\n  \"year\": 2010,\n  \"poster_url\": \"\",\n  \"genre\": 5,\n  \"genre_name\": \"Sci-Fi\",\n  \"created_by\": 1,\n  \"created_by_username\": \"testuser\",\n  \"average_rating\": 9.0,\n  \"review_count\": 1,\n  \"reviews\": [\n    {\n      \"id\": 1,\n      \"movie\": 1,\n      \"user\": 1,\n      \"username\": \"testuser\",\n      \"rating\": 9,\n      \"text\": \"Amazing movie!\",\n      \"created_at\": \"2026-04-14T10:00:00Z\"\n    }\n  ],\n  \"created_at\": \"2026-04-14T10:00:00Z\",\n  \"updated_at\": \"2026-04-14T10:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Movie (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception (Updated)\",\n  \"description\": \"Updated description\",\n  \"year\": 2010,\n  \"poster_url\": \"\",\n  \"genre\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies/1/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "1", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Partial Update Movie (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception (Patched)\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies/1/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "1", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Movie",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movies/1/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "1", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "List Reviews for Movie",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/1/reviews/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "1", "reviews", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"movie\": 1,\n    \"user\": 1,\n    \"username\": \"testuser\",\n    \"rating\": 9,\n    \"text\": \"Amazing movie!\",\n    \"created_at\": \"2026-04-14T10:00:00Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 9,\n  \"text\": \"Amazing movie! Great visual effects and storytelling.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies/1/reviews/",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "1", "reviews", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 1,\n  \"movie\": 1,\n  \"user\": 1,\n  \"username\": \"testuser\",\n  \"rating\": 9,\n  \"text\": \"Amazing movie! Great visual effects and storytelling.\",\n  \"created_at\": \"2026-04-14T10:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reviews/1/",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "1", ""]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
